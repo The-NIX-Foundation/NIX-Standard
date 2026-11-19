@@ -60,7 +60,7 @@ NIX Certified therefore means **conformant to the published NIX profile**, not �
 
 ### 1.4 Normative precedence and interpretation
 
-Where an earlier clause in this document conflicts with Sections 16 through 24 or with the selected conformance profile, the later clarification and profile-specific rule takes precedence. Requirements MUST be testable, scoped, and justified by a published interface or an explicitly identified NIX policy choice.
+The selected conformance profile determines which platform-specific requirements apply. Within a profile, the specific requirement takes precedence over a general design principle only when the specific requirement explicitly identifies the principle it qualifies. Sections 16 through 24 clarify scope and verification; they do not silently cancel earlier requirements. If two normative clauses cannot be reconciled under this rule, the requirement is ambiguous and MUST be corrected by a published revision before it is used to fail a candidate. Requirements MUST be testable, scoped, and justified by a published interface or an explicitly identified NIX policy choice.
 
 A requirement MUST NOT be described as “POSIX-required” unless the cited POSIX edition actually requires it. A NIX policy requirement MUST be labelled as such. An implementation-specific feature MUST be labelled Linux-specific, BSD-specific, or otherwise platform-specific.
 
@@ -92,7 +92,7 @@ Every software artifact seeking **`NIX Certified`** status **MUST** strictly obe
 
 * When a new requirement emerges, engineers **MUST** build a fresh, standalone tool rather than complicating existing programs by adding new, unrelated features or monolithic subcommands.
 
-* Monolithic Swiss-army-knife system daemons that couple unrelated runtime responsibilities (e.g., a PID 1 init system that also manages networking, DNS resolution, container runtimes, login sessions, and network time synchronization inside a single daemon architecture) are strictly prohibited.
+* Components that couple unrelated responsibilities without documented necessity, independent configuration, or meaningful administrative control SHOULD be avoided. An init or service-management suite MUST be evaluated by its actual architecture, enabled components, dependencies, and behaviour—not by its name or project identity. No init system is prohibited solely because it is commonly described as “monolithic”.
 
 * Multicall userland binaries (such as `BusyBox` or `Toybox`) that dispatch independent, single-purpose UNIX applets based on `argv[0]` strictly to reduce storage or memory footprint on constrained systems are permitted, provided each invoked applet preserves clean UNIX CLI semantics, exit codes, and stream behavior.
 
@@ -240,7 +240,7 @@ The project MUST preserve third-party notices and comply with the exact terms of
 
 ## 4. ZERO-BLOATWARE AND ZERO-TELEMETRY ENFORCEMENT POLICY
 
-To hold the **`NIX Certified`** seal, a system or application **MUST** enforce an absolute, zero-exception ban on Bloatware and Telemetry across every layer—from bootloader to userland shell.
+To hold the **`NIX Certified`** seal, a system or application **MUST** enforce a strict prohibition on undisclosed telemetry and unjustified bloatware, subject only to formal exceptions published under Section 22.3 across every layer—from bootloader to userland shell.
 
 ### 4.1 Zero-Telemetry Mandate (Absolute Prohibition)
 
@@ -268,17 +268,17 @@ To hold the **`NIX Certified`** seal, a system or application **MUST** enforce a
 
    * Utilities explicitly designated as network tools in Section 6.6 (`curl`, `wget`, `ssh`, `sshd`, `scp`) **MAY** link against minimalist, auditable TLS libraries (such as `libtls`, `LibreSSL`, or `BearSSL`).
 
-2. **System Profiles and Footprint Ceilings:**
+2. **System Profiles and Footprint Measurements:**
 
-   * Individual core utilities (`ls`, `cp`, `mv`, `rm`, `cat`, `grep`, `sed`, etc.) **SHOULD** compile to less than `64 KiB` (dynamically linked against `musl`) or `128 KiB` (statically linked) on x86_64/aarch64 architectures.
+   * Individual core utilities SHOULD be measured and their binary sizes reported for the target architecture, ABI, compiler, and build mode. The `64 KiB` dynamically linked and `128 KiB` statically linked figures are non-binding engineering targets unless a published footprint profile explicitly adopts them.
 
-   * **`NIX Certified Core OS` (Base Runtime Profile):** A minimal bootable base runtime installation (kernel + init + shell + essential core utilities + networking tools + text editor, without compilers, manual pages, or development toolchains) **MUST** occupy less than `64 MiB` on disk and boot to an interactive root shell in less than `32 MiB` of RAM.
+   * **`NIX Certified Core OS` (Base Runtime Profile):** A candidate MAY request this optional footprint profile. If it does, the profile MUST publish a reproducible hardware/VM baseline, included package set, filesystem/image accounting method, boot target, and memory measurement method. Any numeric disk or RAM ceiling applies only when explicitly published in that profile revision; it is not a universal NIX OS requirement.
 
-   * **`NIX Certified Dev OS` (Development Profile):** A native development installation including `cc`, `make`, `ld`, C headers under `/usr/include`, and `man` pages **MUST** remain lean and bloat-free, capped at less than `512 MiB` on disk (excluding optional large timezone/documentation packs if split) while preserving the `< 32 MiB` idle base runtime RAM target.
+   * **`NIX Certified Dev OS` (Development Profile):** A candidate MAY request this optional footprint profile. If it does, the profile MUST define the included compiler, build tools, headers, manuals, optional data packs, disk accounting method, and runtime measurement conditions. Numeric ceilings apply only when explicitly published in that profile revision and MUST be justified by repeatable measurements.
 
-3. **No Unsolicited Background Daemons:**
+3. **No Unsolicited Background Services:**
 
-   * Idle `NIX Certified OS` installations **MUST NOT** run background indexing daemons, desktop search trackers, package-cache auto-updaters, sound-server brokers, or multi-threaded IPC message buses unless explicitly installed and enabled in `/etc/rc.conf` or `/etc/sv/` by the system administrator.
+   * An idle `NIX Certified OS` installation MUST NOT run optional background services—such as indexing, desktop search, automatic package updates, or sound brokers—unless the service is required by the declared installation role or explicitly enabled by the administrator. The enablement mechanism MUST be the native, documented mechanism of the selected platform and service manager; `/etc/rc.conf` and `/etc/sv/` are examples, not universal required paths.
 
 ---
 
@@ -656,7 +656,7 @@ Every required utility below **MUST** reside in `/bin`, `/sbin`, `/usr/bin`, or 
 | `dmesg` | `/bin/dmesg` | Inspect and control the kernel ring buffer (`-c`, `-H`, `-l`, `-T`, `-w`). | 
 | `uname` | `/bin/uname` | Print kernel and machine architecture identifiers (`-a`, `-s`, `-n`, `-r`, `-v`, `-m`). | 
 | `hostname` | `/bin/hostname` | Display or set the system hostname (`-f`, `-s`, `-F <file>`). | 
-| `init` / `reboot` / `poweroff` / `halt` | `/sbin/init` | Minimalist PID 1 process supervisor and clean system halt/reboot commands. | 
+| `init` / `reboot` / `poweroff` / `halt` | Platform-defined | PID 1 entry point and clean system halt/reboot commands, using the platform's documented paths and interfaces. | 
 | `getty` / `login` | `/sbin/getty` | Initialize TTY lines and authenticate local user sessions. | 
 | `crond` / `crontab` | `/usr/sbin/crond` | Lightweight POSIX scheduled task daemon and crontab editor. | 
 | `syslogd` / `logger` | `/sbin/syslogd` | Plain-text system logging daemon writing to `/var/log/` and CLI log emitter. | 
@@ -686,7 +686,7 @@ Every required utility below **MUST** reside in `/bin`, `/sbin`, `/usr/bin`, or 
 
 ### 7.1 Kernel Architecture
 
-1. **Monolithic Modular Kernel:** A **`NIX Certified OS`** uses a clean monolithic kernel with loadable modules (`.ko` on Linux or native kernel modules on BSD) stored exclusively in `/lib/modules/$(uname -r)/`.
+1. **Kernel Architecture:** A `NIX Certified OS` MAY use a monolithic, modular, microkernel, hybrid, or other documented kernel architecture. The candidate MUST document its architecture, module or driver model, supported extension mechanism, and security boundaries. Linux `/lib/modules/$(uname -r)/` conventions MUST NOT be imposed on BSD or other platform profiles.
 
 2. **Hardened Kernel Defaults:**
 
@@ -710,23 +710,18 @@ Every required utility below **MUST** reside in `/bin`, `/sbin`, `/usr/bin`, or 
 
 ### 7.2 Init System and Service Supervision
 
-1. **PID 1 Simplicity:** PID 1 (`/sbin/init`) **MUST** contain fewer than `2,500` lines of auditable C code. Its sole responsibilities are:
+**Binding policy for all profiles:** NIX does not approve or prohibit an init system by project name. `systemd`, OpenRC, SysVinit, runit, s6, BusyBox init, BSD native init/rc frameworks, and other implementations are eligible when they meet the requirements below. No other clause in this standard may be interpreted as a blanket ban on one of these projects.
 
-   * Mounting essential virtual filesystems (`/proc`, `/sys`, `/dev`, `/run`) if not mounted by `initramfs`.
 
-   * Spawning `/etc/rc.init` (or `s6`/`runit` stage 1) to execute sequential boot scripts.
-
-   * Reaping orphaned zombie child processes (`waitpid(-1, &status, WNOHANG)`).
-
-   * Handling `SIGTERM`, `SIGINT` (`Ctrl-Alt-Del`), and `SIGUSR1`/`SIGUSR2` for clean system halt, poweroff, or reboot.
+1. **PID 1 Responsibilities:** The process running as PID 1 MUST provide or delegate the platform-required early userspace responsibilities, including adoption/reaping of orphaned child processes, orderly system state transitions, and coordination of boot and shutdown. Mounting filesystems, device setup, service startup, and signal handling MAY be delegated to documented helpers. The standard does not impose a source-line limit or require a particular implementation language, script layout, or stage directory. Platform-specific virtual filesystems MUST be mounted only where supported and required by that platform.
 
 2. **Service Supervision:**
 
-   * Long-running daemons are supervised via declarative, directory-based supervisors (`/etc/sv/<service>/run` and `/etc/sv/<service>/finish`), where each `./run` script is an executable POSIX shell script running the daemon in the foreground (`exec /usr/sbin/sshd -D`).
+   * Long-running services MUST have a documented lifecycle mechanism that supports start, stop, status or equivalent observability, and defined failure handling. Supervision MAY be provided by the init system, a separate supervisor, native service scripts, or another documented platform mechanism. The standard does not require `/etc/sv/`, `run`/`finish` scripts, or a particular service-manager project.
 
-   * Service logs are piped directly via standard UNIX pipes (`|`) into a plain-text rotation logger writing to `/var/log/<service>/current`.
+   * Service logs MUST be inspectable using documented tools and MUST have documented retention and rotation behaviour. Human-readable text logs MUST be available for essential system events. Structured or binary journal formats MAY be used as supplementary stores, provided essential records are not locked exclusively in an undocumented or inaccessible format.
 
-   * Binary journal databases, socket-activation monoliths, and D-Bus dependencies in PID 1 are **STRICTLY FORBIDDEN**.
+   * Socket activation, message buses, and service-manager APIs are not categorically prohibited. They MUST be documented, controllable by the administrator, and must not create undisclosed network activity or prevent recovery and service management through the platform's documented administrative interface.
 
 ### 7.3 Inter-Process Communication (IPC) Standards
 
@@ -850,7 +845,7 @@ Every **`NIX Certified OS`** **MUST** follow a transparent, inspectable, text-dr
 2. **Kernel Initialization:** Kernel initializes CPU architecture, memory management, scheduler, VFS, device drivers, and mounts root filesystem (or runs `/init` inside `initramfs` to mount real root and `switch_root` / `chroot`).
 3. **PID 1 (`/sbin/init`):** Starts as PID `1`, mounts `/proc`, `/sys` (on Linux), `/dev`, and `/run` if not already mounted, sets up signal handlers, and invokes the system initialization script (`/etc/rc.init` or runlevel/stage scripts).
 4. **System Configuration & Filesystems:** Sets hostname from `/etc/hostname`, applies `sysctl` settings from `/etc/sysctl.conf`, checks root/local filesystems via `fsck` where configured, mounts remaining filesystems in `/etc/fstab` (`mount -a`), activates swap (`swapon -a`), and cleans stale lock/temporary files in `/run` and `/tmp`.
-5. **Network & Supervised Services:** Configures loopback (`127.0.0.1`) and configured interfaces via `/etc/network` or `/etc/rc.conf`, starts essential system loggers (`syslogd`/`klogd`) and scheduled task daemon (`crond`) if enabled, and launches supervised services in `/etc/sv/` or `/etc/rc.d/`.
+5. **Network & Services:** Configures loopback and administrator-selected interfaces using the platform's documented network configuration mechanism; starts logging and scheduled-task services when included and enabled; and starts other enabled services through the selected platform's documented service-management mechanism. Paths such as `/etc/network`, `/etc/rc.conf`, `/etc/sv/`, and `/etc/rc.d/` are platform examples, not universal requirements.
 6. **Getty & Login:** Spawns `getty` instances on configured virtual consoles (`/dev/tty1`..`/dev/tty6`) and serial consoles (`/dev/ttyS0`), presenting `/etc/issue` and invoking `login` -> `/bin/sh` upon authentication.
 
 ### 11.2 Clean Shutdown, Reboot, and Single-User Recovery
@@ -858,7 +853,7 @@ Every **`NIX Certified OS`** **MUST** follow a transparent, inspectable, text-dr
 * Passing `single`, `S`, `-s`, or `init=/bin/sh` on the kernel command line **MUST** allow an authorized administrator to reach a single-user recovery shell without non-essential daemons.
 
 ### 11.3 Logging (`syslog`) and Scheduled Tasks (`cron`)
-* **Plain-Text Logs:** System and daemon logs **MUST** be stored as plain text under `/var/log/` (with log rotation scripts in `/etc/cron.daily/` or via `svlogd` keeping bounded disk space). Binary-only log stores that require proprietary readers to inspect basic messages are **STRICTLY FORBIDDEN**.
+* **Inspectable Logs:** Essential system and service events MUST be available in a documented, inspectable form. A plain-text export or reader MUST be provided for essential records. A binary journal MAY be used as an additional storage format, but MUST NOT be the sole means of accessing essential records if its format or reader is unavailable to administrators. Log rotation and retention MUST be documented; `/var/log/`, `/etc/cron.daily/`, and `svlogd` are examples, not universal requirements.
 * **Cron:** `/usr/sbin/crond` **MUST** parse standard 5-field cron schedules (`minute hour day-of-month month day-of-week`) in `/etc/crontab`, `/etc/cron.d/*`, and `/var/spool/cron/crontabs/<user>`, executing commands with a minimal sanitized environment and logging execution results to `/var/log/cron.log`.
 
 ---
@@ -905,7 +900,7 @@ Every standalone software repository seeking **`NIX Certified`** status **SHOULD
 
 1. **Language Standard:** Core systems software **MUST** be written in ISO C99 or C11 (`-std=c99` or `-std=c11`) or strict POSIX.1-2017 Shell (`#!/bin/sh`).
 
-2. **Mandatory Compiler Flags:** All C builds **MUST** compile cleanly with zero warnings under:
+2. **Mandatory Compiler Flags:** C builds **SHOULD** compile cleanly without warnings using strict diagnostic and hardening flags supported by the target compiler and platform (see Section 18.2.9), such as:
 
    ```makefile
    CFLAGS = -std=c11 -O2 -Wall -Wextra -Wpedantic -Werror \
@@ -945,11 +940,11 @@ Any operating system distribution, kernel, or software project—developed by an
 
 ### 14.2 Automated Certification Gate (`nix-audit`)
 
-To earn or renew the **`NIX Certified`** seal, a candidate release **MUST** pass all five automated verification gates without a single warning or waiver:
+To earn or renew the **`NIX Certified`** seal, a candidate release MUST receive an audit outcome of `Pass` or `Pass with Published Exceptions` under Section 22. Warnings MUST be resolved or recorded with their impact; an exception is valid only when approved and published under Section 22. The automated gates provide evidence and do not replace required human review:
 
 1. **License & Source Freedom Gate:**
 
-   * Verify `LICENSE` exists and matches an OSI/FSF-approved SPDX identifier.
+   * Verify that licence files and SPDX identifiers are present where applicable, then evaluate the exact licence terms and dependency obligations under Section 3. An OSI or FSF approval claim MUST be checked against that organisation's own current list.
 
    * Verify complete source code availability and zero proprietary CPU binaries/modules or `ALL RIGHTS RESERVED` restrictions (while honoring the passive redistributable `/lib/firmware` policy in Section 3.2).
 
@@ -963,7 +958,7 @@ To earn or renew the **`NIX Certified`** seal, a candidate release **MUST** pass
 
    * Verify `ldd` / `readelf -d` dynamic dependency trees of all `/bin` and `/sbin` binaries contain strictly `libc.so` (and `libm.so` / `libz.so` / `libcrypto.so` where explicitly justified). Utilities explicitly designated as network tools in Section 6.6 (`curl`, `wget`, `ssh`, `sshd`, `scp`) **MAY** link against minimalist, auditable TLS libraries (such as `libtls`, `LibreSSL`, or `BearSSL`).
 
-   * Verify core utility binary size ceilings (`< 64 KiB` dynamically linked) and profile ceilings (`NIX Certified Core OS`: `< 64 MiB` disk, `< 32 MiB` RAM; `NIX Certified Dev OS`: `< 512 MiB` disk, `< 32 MiB` idle base runtime RAM).
+   * Measure binary size, installed image size, and runtime memory for any footprint profile claimed by the candidate. These measurements MUST use the baseline, architecture, build mode, and test conditions defined by that profile. A general NIX certification MUST NOT fail solely because it exceeds a footprint target that is not part of its selected profile.
 
 4. **FHS, UNIX Semantics & Essential Core Utilities Gate (For `NIX Certified OS`):**
 
@@ -985,7 +980,7 @@ To earn or renew the **`NIX Certified`** seal, a candidate release **MUST** pass
 | Zero Telemetry | Source review, symbol screening (`readelf`/`objdump`), runtime tracing & packet capture | Zero undisclosed collection/transmission of telemetry; all network activity attributable per Section 4.1.4 | All Candidates |
 | Local `AF_UNIX` Sockets | `strace` / AST/CFG inspection | `socket()` domain restricted to `AF_UNIX`/`AF_LOCAL` in local binaries | Local Utilities & Daemons |
 | Minimalist TLS Exception | `ldd` / `readelf -d` allowlist | Only approved Section 6.6 network tools link `libtls`/`LibreSSL`/`BearSSL` | Network Utilities |
-| Zero Bloatware & Footprint | Binary size & image disk/RAM test | Core utils `< 64 KiB` (dyn); Core OS `< 64 MiB` disk & `< 32 MiB` RAM; Dev OS `< 512 MiB` disk; no idle bloat daemons | All Candidates / OS |
+| Resource Footprint | Reproducible binary/image/RAM measurement | Report measured values against the limits of the selected footprint profile; no unrequested universal ceiling | Candidates claiming a footprint profile |
 | NIX-FHS & `/dev` Nodes | Filesystem & inode audit script | Required directories, permissions (`0755`, `1777`, `0700`, `0600`), and `/dev` nodes present | `NIX Certified OS` |
 | Signals, TTY & Job Control | Automated POSIX C/PTY test suite | `sigaction`, `termios`, PTYs, process groups, and `SIGPIPE`/`SIGTERM`/`SIGINT` conform | `NIX Certified OS` |
 | Essential Core Utilities | Flag & pipeline test suite | All Section 6 tools pass pipe (`stdin`/`stdout`), exit-code, and flag checks | `NIX Certified OS` |
@@ -1005,7 +1000,7 @@ To earn or renew the **`NIX Certified`** seal, a candidate release **MUST** pass
 
 **Important:** The declaration below is valid only for an active NIX Foundation certification recorded in the public registry. It MUST NOT be interpreted as a UNIX trademark or SUS certification claim.
 
-A vendor, maintainer, or distribution publishing a **`NIX Certified`** release is authorized to include the following verbatim conformance declaration in its official documentation and `/etc/os-release` metadata:
+A vendor, maintainer, or distribution MAY include the following conformance declaration in its official documentation. It MUST NOT place the full declaration in `/etc/os-release` unless the operating system's metadata specification permits the field and format used:
 
 > *"This product conforms to The NIX Standard (`NIX-STAN-001`, version 1.0), profile [PROFILE], certification tier [TIER], for release [RELEASE]. Its current certification status and audit scope are recorded by The NIX Foundation at https://github.com/The-NIX-Foundation/NIX-Certified. This statement does not represent UNIX trademark authorization or The Open Group certification."*
 
@@ -1052,9 +1047,9 @@ The Common Base Profile defines the interfaces expected from every NIX OS candid
 
 16.2.6 Linux-specific requirements MUST NOT be imposed on the BSD profile.
 
-16.2.7 A Linux implementation MAY use systemd, OpenRC, runit, s6, BusyBox init, or another init system if it satisfies the selected NIX service-management requirements.
+16.2.7 A Linux implementation MAY use any init or service-management system that satisfies Sections 7.2, 11, and 20.
 
-16.2.8 The use of systemd MUST NOT automatically disqualify a candidate; the audit MUST evaluate documented behaviour, dependencies, policy, and user control.
+16.2.8 No init or service-management implementation MUST be automatically accepted or disqualified by name; the audit MUST evaluate documented behaviour, dependencies, policy, security, and administrator control.
 
 16.2.9 The candidate MUST describe its kernel upgrade and rollback process.
 
@@ -1910,3 +1905,24 @@ D.27 Certification tier MUST be stated.
 
 D.28 Registry entry MUST be stated after approval.
 
+## APPENDIX E. NORMATIVE CONSISTENCY AND CHANGE CONTROL
+
+E.1 **Single source of policy.** Each cross-cutting policy MUST have one primary normative section. Other sections MAY summarize it, but summaries MUST refer to the primary section and MUST NOT create a different rule.
+
+E.2 **No name-based product bans.** Unless a profile explicitly states otherwise with a technical rationale, a product, project, daemon, init system, kernel, libc, shell, or service manager MUST NOT be prohibited or approved solely by its name.
+
+E.3 **Requirement classification.** Every requirement MUST be classifiable as one of: common mandatory requirement, profile-specific mandatory requirement, optional capability, recommendation, or informative example. Examples MUST NOT be interpreted as requirements.
+
+E.4 **Platform scope.** A path, command, syscall, kernel parameter, service-manager interface, or device node that is not common to all selected platforms MUST be labelled with its platform scope. A platform-specific example MUST NOT be used as a universal conformance test.
+
+E.5 **Exceptions.** Exceptions MUST be handled only through Section 22.3. A waiver MUST identify the exact clause, affected profile, release, risk, compensating control, approver, and review date.
+
+E.6 **Conflict resolution.** When two mandatory clauses appear inconsistent, the auditor MUST first apply the selected profile and the explicit scope of each clause. If the conflict remains, the auditor MUST record the issue as an ambiguity and MUST NOT fail the candidate on the basis of either conflicting interpretation until the Foundation publishes a clarification or revision.
+
+E.7 **Change impact.** Every revision MUST include a change log identifying modified normative clauses, affected profiles, compatibility impact, and any test vectors that changed.
+
+E.8 **Cross-reference audit.** Before publication, the Foundation MUST verify section references, defined terms, normative keywords, tables, profile applicability, and consistency between the standard and the `nix-audit` implementation.
+
+E.9 **No silent override.** A later section does not automatically override an earlier section merely because it appears later. Overrides MUST explicitly identify the clause being modified and state the replacement rule.
+
+E.10 **Certification transition.** A revision that changes a mandatory requirement MUST define an effective date and a transition period for already-certified releases. Security-critical corrections MAY define an accelerated transition with a published rationale.
