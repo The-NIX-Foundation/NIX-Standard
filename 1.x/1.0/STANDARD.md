@@ -24,7 +24,7 @@ Certification is open to **all** independent operating systems, distributions, k
 
 The key words `MUST`, `MUST NOT`, `REQUIRED`, `SHALL`, `SHALL NOT`, `SHOULD`, `SHOULD NOT`, `RECOMMENDED`, `MAY`, and `OPTIONAL` in this document are to be interpreted as described in RFC 2119 and RFC 8174.
 
-* **NIX Certified Software:** Any standalone executable, library, daemon, or subsystem—from any vendor, community, or author—that passes `nix-audit` verification against all applicable requirements of Sections 2, 3, 4, 8, 9, 10, 12, 13, 14, 15, 18, 20, 21, and 23 of this standard for its declared tier and profile.
+* **NIX Certified Software:** Any standalone executable, library, daemon, or subsystem—from any vendor, community, or author—that passes `NIX Audit` verification against all applicable requirements of Sections 2, 3, 4, 8, 9, 10, 12, 13, 14, 15, 18, 20, 21, and 23 of this standard for its declared tier and profile.
 
 * **NIX Certified Operating System (`NIX Certified OS`):** Any complete operating system distribution that passes 100% of this standard, including the NIX Filesystem Hierarchy Standard (Section 5), the Essential UNIX Core Utilities Mandate (Section 6), the Minimalist Kernel/Init Architecture (Section 7), and all UNIX runtime, terminal, process, signal, security, and operational subsystems defined throughout this specification.
 
@@ -938,7 +938,7 @@ Any operating system distribution, kernel, or software project—developed by an
 
 4. **`NIX Certified OS`:** Awarded to complete operating system distributions that pass Sections 2 through 24 in full for their selected profile (such as `NIX Certified Core OS` or `NIX Certified Dev OS`), including the applicable NIX-FHS directory hierarchy (Section 5), the Essential UNIX Core Utilities suite (Section 6), and the Kernel/Init/Process/Terminal/Operational subsystems (Sections 7 through 13).
 
-### 14.2 Automated Certification Gate (`nix-audit`)
+### 14.2 Automated Certification Gate (`NIX Audit`)
 
 To earn or renew the **`NIX Certified`** seal, a candidate release MUST receive an audit outcome of `Pass` or `Pass with Published Exceptions` under Section 22. Warnings MUST be resolved or recorded with their impact; an exception is valid only when approved and published under Section 22. The automated gates provide evidence and do not replace required human review:
 
@@ -972,7 +972,7 @@ To earn or renew the **`NIX Certified`** seal, a candidate release MUST receive 
 
    * Perform two independent builds in distinct paths with `SOURCE_DATE_EPOCH=1700000000` and verify identical SHA-256 digests across output artifacts.
 
-### 14.3 Conformance Verification Matrix (`nix-audit` Checklist)
+### 14.3 Conformance Verification Matrix (`NIX Audit` Checklist)
 
 | Audit Domain | Verification Method | Pass Criterion | Applies To |
 | :--- | :--- | :--- | :--- |
@@ -988,7 +988,7 @@ To earn or renew the **`NIX Certified`** seal, a candidate release MUST receive 
 
 ### 14.4 Issuance, Public Registry, and Revocation
 
-* **Public Certification Ledger:** Upon passing `nix-audit` and peer review, the candidate release hash, version, and compliance report are published in the public `NIX Certified` registry (`https://github.com/The-NIX-Foundation/NIX-Certified`), authorizing the project to display the official **`NIX Certified`** badge and conformance statement.
+* **Public Certification Ledger:** Upon passing `NIX Audit` and peer review, the candidate release hash, version, and compliance report are published in the public `NIX Certified` registry (`https://github.com/The-NIX-Foundation/NIX-Certified`), authorizing the project to display the official **`NIX Certified`** badge and conformance statement.
 
 * **Per-Version Validity:** Certification applies strictly to audited release versions (`MAJOR.MINOR.PATCH`). Unaudited versions or downstream modifications **MUST NOT** claim `NIX Certified` status until re-verified.
 
@@ -1921,7 +1921,7 @@ E.6 **Conflict resolution.** When two mandatory clauses appear inconsistent, the
 
 E.7 **Change impact.** Every revision MUST include a change log identifying modified normative clauses, affected profiles, compatibility impact, and any test vectors that changed.
 
-E.8 **Cross-reference audit.** Before publication, the Foundation MUST verify section references, defined terms, normative keywords, tables, profile applicability, and consistency between the standard and the `nix-audit` implementation.
+E.8 **Cross-reference audit.** Before publication, the Foundation MUST verify section references, defined terms, normative keywords, tables, profile applicability, and consistency between the standard and the `NIX Audit` implementation.
 
 E.9 **No silent override.** A later section does not automatically override an earlier section merely because it appears later. Overrides MUST explicitly identify the clause being modified and state the replacement rule.
 
