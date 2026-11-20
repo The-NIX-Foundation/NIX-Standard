@@ -18,15 +18,15 @@
 
 This document defines **The NIX Standard (`NIX-STAN-001`)**, an open, vendor-neutral technical specification maintained by **The NIX Foundation** to certify authentic UNIX-compliant software and operating systems worldwide. Analogous in governance to the Single UNIX Specification—yet strictly dedicated to genuine UNIX minimalism, software freedom, and zero-telemetry engineering—this standard establishes the exact criteria required for any third-party or community project to earn and display the **`NIX Certified`** seal.
 
-Certification is open to **all** independent operating systems, distributions, kernels, and userland utilities—regardless of whether they are developed inside or outside The NIX Foundation—provided they pass 100% of the normative requirements and automated verification audits defined herein.
+Certification is open to **all** independent operating systems, distributions, kernels, and userland utilities—regardless of whether they are developed inside or outside The NIX Foundation—provided they conform to 100% of the normative requirements defined herein.
 
 ### 1.1 Definitions and Normative Keywords
 
 The key words `MUST`, `MUST NOT`, `REQUIRED`, `SHALL`, `SHALL NOT`, `SHOULD`, `SHOULD NOT`, `RECOMMENDED`, `MAY`, and `OPTIONAL` in this document are to be interpreted as described in RFC 2119 and RFC 8174.
 
-* **NIX Certified Software:** Any standalone executable, library, daemon, or subsystem—from any vendor, community, or author—that passes `NIX Audit` verification against all applicable requirements of Sections 2, 3, 4, 8, 9, 10, 12, 13, 14, 15, 18, 20, 21, and 23 of this standard for its declared tier and profile.
+* **NIX Certified Software:** Any standalone executable, library, daemon, or subsystem—from any vendor, community, or author—that conforms to all applicable requirements of Sections 2, 3, 4, 8, 9, 10, 12, 13, 14, 15, 18, 20, 21, and 23 of this standard for its declared tier and profile.
 
-* **NIX Certified Operating System (`NIX Certified OS`):** Any complete operating system distribution that passes 100% of this standard, including the NIX Filesystem Hierarchy Standard (Section 5), the Essential UNIX Core Utilities Mandate (Section 6), the Minimalist Kernel/Init Architecture (Section 7), and all UNIX runtime, terminal, process, signal, security, and operational subsystems defined throughout this specification.
+* **NIX Certified Operating System (`NIX Certified OS`):** Any complete operating system distribution that conforms to 100% of this standard, including the NIX Filesystem Hierarchy Standard (Section 5), the Essential UNIX Core Utilities Mandate (Section 6), the Minimalist Kernel/Init Architecture (Section 7), and all UNIX runtime, terminal, process, signal, security, and operational subsystems defined throughout this specification.
 
 * **Bloatware:** Any code, asset, dependency, daemon, background service, graphical wrapper, or abstraction layer that does not directly serve the primary, documented single responsibility of the software component, or that introduces unnecessary resource consumption (CPU cycles, resident memory, disk footprint, or startup latency) without deterministic user-invoked utility.
 
@@ -52,7 +52,7 @@ In accordance with **The NIX Foundation Manifesto (v1.0)**, the `NIX Certified` 
 
 `UNIX` is a registered certification and trademark ecosystem administered by The Open Group. A product may claim to be a UNIX system only when it is entitled to do so under the applicable trademark and certification rules. NIX Foundation certification does not confer that entitlement.
 
-`POSIX` specifies portable operating-system interfaces and utility behavior. The Single UNIX Specification (SUS) incorporates and extends relevant standards and defines the basis for formal UNIX product certification. A NIX profile may select POSIX editions and options, but passing a NIX audit is not equivalent to passing the SUS certification process.
+`POSIX` specifies portable operating-system interfaces and utility behavior. The Single UNIX Specification (SUS) incorporates and extends relevant standards and defines the basis for formal UNIX product certification. A NIX profile may select POSIX editions and options, but NIX conformance is not equivalent to passing the SUS certification process.
 
 BSD systems and Linux systems are not interchangeable implementations. They expose different kernel interfaces, device-management facilities, service-management conventions, filesystem layouts, and administrative tools. A portable standard must define a common required interface and explicitly identify implementation-specific extensions.
 
@@ -250,9 +250,9 @@ To hold the **`NIX Certified`** seal, a system or application **MUST** enforce a
 
 3. **No Hardware Fingerprinting:** Software **MUST NOT** hash MAC addresses, CPU serial numbers, motherboard UUIDs, or disk serial numbers to generate persistent machine identifiers for external tracking. (`/etc/machine-id`, if present solely for local compatibility, **MUST** be ephemeral or zeroed unless explicitly configured by the administrator).
 
-4. **Compile-Time and Audit Verification:**
+4. **Compile-Time and Runtime Verification:**
 
-   * Audits MUST combine source review, dependency inspection, configuration review, runtime observation, packet capture where appropriate, and documented threat modelling. Symbol scans and string searches MAY identify leads but MUST NOT be treated as proof that a program does or does not communicate.
+   * Verification MUST combine source review, dependency inspection, configuration review, runtime observation, packet capture where appropriate, and documented threat modelling. Symbol scans and string searches MAY identify leads but MUST NOT be treated as proof that a program does or does not communicate.
 
    * Local networking, user-requested network operations, server software, package retrieval, time synchronisation, and protocol implementations MUST be evaluated according to declared function and user/admin configuration. The mere presence of a socket API or TLS library is not proof of telemetry.
 
@@ -266,7 +266,7 @@ To hold the **`NIX Certified`** seal, a system or application **MUST** enforce a
 
    * Core utilities **MUST NOT** depend on C++ runtimes, Python, Perl, Node.js, JVM, Electron, D-Bus, GLib, or XML/JSON parsing libraries for basic system operations.
 
-   * Utilities explicitly designated as network tools in Section 6.6 (`curl`, `wget`, `ssh`, `sshd`, `scp`) **MAY** link against minimalist, auditable TLS libraries (such as `libtls`, `LibreSSL`, or `BearSSL`).
+   * Utilities explicitly designated as network tools in Section 6.6 (`curl`, `wget`, `ssh`, `sshd`, `scp`) **MAY** link against minimalist, reviewable TLS libraries (such as `libtls`, `LibreSSL`, or `BearSSL`).
 
 2. **System Profiles and Footprint Measurements:**
 
@@ -924,23 +924,23 @@ Every standalone software repository seeking **`NIX Certified`** status **SHOULD
 
 ---
 
-## 14. THE `NIX CERTIFIED` SEAL, AUDIT PROTOCOL, AND GOVERNANCE
+## 14. THE `NIX CERTIFIED` SEAL, CERTIFICATION VERIFICATION, AND GOVERNANCE
 
 Any operating system distribution, kernel, or software project—developed by any organization, team, or independent author—may apply for **`NIX-Certified`** status via the public certification repository (`https://github.com/The-NIX-Foundation/NIX-Certified`).
 
 ### 14.1 Certification Tiers
 
-1. **`NIX Certified Utility`:** Awarded to individual CLI tools, daemons, shells, and editors that pass Sections 2, 3, 4, 8, 9, 10, 12, 13, 14, 15, 18, 20, 21, and 23.
+1. **`NIX Certified Utility`:** Awarded to individual CLI tools, daemons, shells, and editors that conform to Sections 2, 3, 4, 8, 9, 10, 12, 13, 14, 15, 18, 20, 21, and 23.
 
-2. **`NIX Certified Library`:** Awarded to standalone C libraries and runtime components that pass Sections 2, 3, 4, 8, 9, 12, 13, 14, 15, 18, 21, and 23 for their declared ABI.
+2. **`NIX Certified Library`:** Awarded to standalone C libraries and runtime components that conform to Sections 2, 3, 4, 8, 9, 12, 13, 14, 15, 18, 21, and 23 for their declared ABI.
 
-3. **`NIX Certified Kernel`:** Awarded to standalone operating system kernels that pass Sections 2, 3, 4, 7.1, 8, 12, 14, 15, 16, 18, 21, and 23 for their declared configuration and architecture.
+3. **`NIX Certified Kernel`:** Awarded to standalone operating system kernels that conform to Sections 2, 3, 4, 7.1, 8, 12, 14, 15, 16, 18, 21, and 23 for their declared configuration and architecture.
 
-4. **`NIX Certified OS`:** Awarded to complete operating system distributions that pass Sections 2 through 24 in full for their selected profile (such as `NIX Certified Core OS` or `NIX Certified Dev OS`), including the applicable NIX-FHS directory hierarchy (Section 5), the Essential UNIX Core Utilities suite (Section 6), and the Kernel/Init/Process/Terminal/Operational subsystems (Sections 7 through 13).
+4. **`NIX Certified OS`:** Awarded to complete operating system distributions that conform to Sections 2 through 24 in full for their selected profile (such as `NIX Certified Core OS` or `NIX Certified Dev OS`), including the applicable NIX-FHS directory hierarchy (Section 5), the Essential UNIX Core Utilities suite (Section 6), and the Kernel/Init/Process/Terminal/Operational subsystems (Sections 7 through 13).
 
-### 14.2 Automated Certification Gate (`NIX Audit`)
+### 14.2 Certification Verification Procedures
 
-To earn or renew the **`NIX Certified`** seal, a candidate release MUST receive an audit outcome of `Pass` or `Pass with Published Exceptions` under Section 22. Warnings MUST be resolved or recorded with their impact; an exception is valid only when approved and published under Section 22. The automated gates provide evidence and do not replace required human review:
+To earn or renew the **`NIX Certified`** seal, a candidate release MUST receive a certification outcome of `Pass` or `Pass with Published Exceptions` under Section 22. Warnings MUST be resolved or recorded with their impact; an exception is valid only when approved and published under Section 22. These verification procedures provide evidence and do not replace required human review:
 
 1. **License & Source Freedom Gate:**
 
@@ -950,13 +950,13 @@ To earn or renew the **`NIX Certified`** seal, a candidate release MUST receive 
 
 2. **Zero-Telemetry & Network Behaviour Gate:**
 
-   * Perform initial screening via symbol scans (`readelf -s`, `objdump -T`) and static string/source audits to identify network symbols (`getaddrinfo`, `res_query`, `curl_easy_init`, `SSL_connect`), hardcoded endpoints, or analytics hooks, combined with runtime syscall tracing (`strace`) and packet observation per Section 4.1.4 and Section 24.9.
+   * Perform initial screening via symbol scans (`readelf -s`, `objdump -T`) and static string/source reviews to identify network symbols (`getaddrinfo`, `res_query`, `curl_easy_init`, `SSL_connect`), hardcoded endpoints, or analytics hooks, combined with runtime syscall tracing (`strace`) and packet observation per Section 4.1.4 and Section 24.9.
 
    * Verify that any outbound network activity or `AF_INET`/`AF_INET6` socket usage is strictly attributable to declared network functions or explicit administrator/user invocation, and that local-only daemons restrict `socket()` usage to `AF_UNIX`/`AF_LOCAL`.
 
 3. **Zero-Bloatware & Dependency Gate:**
 
-   * Verify `ldd` / `readelf -d` dynamic dependency trees of all `/bin` and `/sbin` binaries contain strictly `libc.so` (and `libm.so` / `libz.so` / `libcrypto.so` where explicitly justified). Utilities explicitly designated as network tools in Section 6.6 (`curl`, `wget`, `ssh`, `sshd`, `scp`) **MAY** link against minimalist, auditable TLS libraries (such as `libtls`, `LibreSSL`, or `BearSSL`).
+   * Verify `ldd` / `readelf -d` dynamic dependency trees of all `/bin` and `/sbin` binaries contain strictly `libc.so` (and `libm.so` / `libz.so` / `libcrypto.so` where explicitly justified). Utilities explicitly designated as network tools in Section 6.6 (`curl`, `wget`, `ssh`, `sshd`, `scp`) **MAY** link against minimalist, reviewable TLS libraries (such as `libtls`, `LibreSSL`, or `BearSSL`).
 
    * Measure binary size, installed image size, and runtime memory for any footprint profile claimed by the candidate. These measurements MUST use the baseline, architecture, build mode, and test conditions defined by that profile. A general NIX certification MUST NOT fail solely because it exceeds a footprint target that is not part of its selected profile.
 
@@ -972,25 +972,25 @@ To earn or renew the **`NIX Certified`** seal, a candidate release MUST receive 
 
    * Perform two independent builds in distinct paths with `SOURCE_DATE_EPOCH=1700000000` and verify identical SHA-256 digests across output artifacts.
 
-### 14.3 Conformance Verification Matrix (`NIX Audit` Checklist)
+### 14.3 Conformance Verification Matrix
 
-| Audit Domain | Verification Method | Pass Criterion | Applies To |
+| Verification Domain | Verification Method | Pass Criterion | Applies To |
 | :--- | :--- | :--- | :--- |
 | Open Source License | SPDX scan & `LICENSE` check | Approved OSI/FSF license; zero proprietary CPU code/modules | All Candidates |
 | Zero Telemetry | Source review, symbol screening (`readelf`/`objdump`), runtime tracing & packet capture | Zero undisclosed collection/transmission of telemetry; all network activity attributable per Section 4.1.4 | All Candidates |
 | Local `AF_UNIX` Sockets | `strace` / AST/CFG inspection | `socket()` domain restricted to `AF_UNIX`/`AF_LOCAL` in local binaries | Local Utilities & Daemons |
 | Minimalist TLS Exception | `ldd` / `readelf -d` allowlist | Only approved Section 6.6 network tools link `libtls`/`LibreSSL`/`BearSSL` | Network Utilities |
 | Resource Footprint | Reproducible binary/image/RAM measurement | Report measured values against the limits of the selected footprint profile; no unrequested universal ceiling | Candidates claiming a footprint profile |
-| NIX-FHS & `/dev` Nodes | Filesystem & inode audit script | Required directories, permissions (`0755`, `1777`, `0700`, `0600`), and `/dev` nodes present | `NIX Certified OS` |
+| NIX-FHS & `/dev` Nodes | Filesystem & inode verification script | Required directories, permissions (`0755`, `1777`, `0700`, `0600`), and `/dev` nodes present | `NIX Certified OS` |
 | Signals, TTY & Job Control | Automated POSIX C/PTY test suite | `sigaction`, `termios`, PTYs, process groups, and `SIGPIPE`/`SIGTERM`/`SIGINT` conform | `NIX Certified OS` |
 | Essential Core Utilities | Flag & pipeline test suite | All Section 6 tools pass pipe (`stdin`/`stdout`), exit-code, and flag checks | `NIX Certified OS` |
 | Reproducible Build | Dual build with `SOURCE_DATE_EPOCH` | Identical SHA-256 checksums across independent builds | All Candidates |
 
 ### 14.4 Issuance, Public Registry, and Revocation
 
-* **Public Certification Ledger:** Upon passing `NIX Audit` and peer review, the candidate release hash, version, and compliance report are published in the public `NIX Certified` registry (`https://github.com/The-NIX-Foundation/NIX-Certified`), authorizing the project to display the official **`NIX Certified`** badge and conformance statement.
+* **Public Certification Ledger:** Upon passing certification review and peer review, the candidate release hash, version, and compliance report are published in the public `NIX Certified` registry (`https://github.com/The-NIX-Foundation/NIX-Certified`), authorizing the project to display the official **`NIX Certified`** badge and conformance statement.
 
-* **Per-Version Validity:** Certification applies strictly to audited release versions (`MAJOR.MINOR.PATCH`). Unaudited versions or downstream modifications **MUST NOT** claim `NIX Certified` status until re-verified.
+* **Per-Version Validity:** Certification applies strictly to reviewed release versions (`MAJOR.MINOR.PATCH`). Unreviewed versions or downstream modifications **MUST NOT** claim `NIX Certified` status until re-verified.
 
 * **Immediate Revocation:** If any certified release is subsequently discovered to contain telemetry, proprietary CPU binaries/modules, or violations of `NIX-STAN-001`, The NIX Foundation **SHALL** revoke its certification in the public ledger and require immediate removal of the `NIX Certified` mark.
 
@@ -1002,7 +1002,7 @@ To earn or renew the **`NIX Certified`** seal, a candidate release MUST receive 
 
 A vendor, maintainer, or distribution MAY include the following conformance declaration in its official documentation. It MUST NOT place the full declaration in `/etc/os-release` unless the operating system's metadata specification permits the field and format used:
 
-> *"This product conforms to The NIX Standard (`NIX-STAN-001`, version 1.0), profile [PROFILE], certification tier [TIER], for release [RELEASE]. Its current certification status and audit scope are recorded by The NIX Foundation at https://github.com/The-NIX-Foundation/NIX-Certified. This statement does not represent UNIX trademark authorization or The Open Group certification."*
+> *"This product conforms to The NIX Standard (`NIX-STAN-001`, version 1.0), profile [PROFILE], certification tier [TIER], for release [RELEASE]. Its current certification status and conformance scope are recorded by The NIX Foundation at https://github.com/The-NIX-Foundation/NIX-Certified. This statement does not represent UNIX trademark authorization or The Open Group certification."*
 
 
 ---
@@ -1049,7 +1049,7 @@ The Common Base Profile defines the interfaces expected from every NIX OS candid
 
 16.2.7 A Linux implementation MAY use any init or service-management system that satisfies Sections 7.2, 11, and 20.
 
-16.2.8 No init or service-management implementation MUST be automatically accepted or disqualified by name; the audit MUST evaluate documented behaviour, dependencies, policy, security, and administrator control.
+16.2.8 No init or service-management implementation MUST be automatically accepted or disqualified by name; the certification review MUST evaluate documented behaviour, dependencies, policy, security, and administrator control.
 
 16.2.9 The candidate MUST describe its kernel upgrade and rollback process.
 
@@ -1075,7 +1075,7 @@ The Common Base Profile defines the interfaces expected from every NIX OS candid
 
 16.3.9 The candidate SHOULD preserve native administration tools rather than imitate another operating system without a compatibility need.
 
-16.3.10 The candidate MUST test its native package and ports/build framework as part of the OS audit.
+16.3.10 The candidate MUST test its native package and ports/build framework as part of the OS certification review.
 
 ### 16.4 Historical UNIX and Research Systems
 
@@ -1105,7 +1105,7 @@ The Common Base Profile defines the interfaces expected from every NIX OS candid
 
 17.1.5 A product MUST NOT claim complete POSIX conformance solely because it implements a familiar subset of shell commands.
 
-17.1.6 A product MUST NOT claim SUS certification based solely on a NIX audit.
+17.1.6 A product MUST NOT claim SUS certification based solely on NIX conformance.
 
 17.1.7 The certification report MUST state the test-suite name, version, invocation, and result.
 
@@ -1173,7 +1173,7 @@ The Common Base Profile defines the interfaces expected from every NIX OS candid
 
 17.4.9 A skipped mandatory test MUST prevent a full pass unless the certification authority grants a documented exception.
 
-17.4.10 The audit MUST preserve logs sufficient for independent review.
+17.4.10 The certification review MUST preserve logs sufficient for independent review.
 
 ---
 
@@ -1353,9 +1353,9 @@ The Common Base Profile defines the interfaces expected from every NIX OS candid
 
 20.2.8 Privacy documentation MUST be versioned with the product release.
 
-20.2.9 The audit MUST test the default installation, not only a privacy-hardened configuration.
+20.2.9 The certification review MUST test the default installation, not only a privacy-hardened configuration.
 
-20.2.10 Privacy claims MUST be supported by evidence and bounded by the audit scope.
+20.2.10 Privacy claims MUST be supported by evidence and bounded by the certification scope.
 
 ### 20.3 Service Supervision
 
@@ -1475,7 +1475,7 @@ The Common Base Profile defines the interfaces expected from every NIX OS candid
 
 22.1.10 An application MUST identify a responsible maintainer contact.
 
-### 22.2 Audit Outcomes
+### 22.2 Certification Outcomes
 
 22.2.1 A result MUST be one of: Pass, Pass with Published Exceptions, Fail, or Incomplete.
 
@@ -1487,9 +1487,9 @@ The Common Base Profile defines the interfaces expected from every NIX OS candid
 
 22.2.5 An Incomplete result MUST identify missing evidence or unexecuted tests.
 
-22.2.6 An incomplete audit MUST NOT be represented as certification.
+22.2.6 An incomplete certification review MUST NOT be represented as certification.
 
-22.2.7 Audit evidence MUST be retained according to a published retention policy.
+22.2.7 Certification evidence MUST be retained according to a published retention policy.
 
 22.2.8 The applicant MUST have an opportunity to respond to factual errors.
 
@@ -1523,7 +1523,7 @@ The Common Base Profile defines the interfaces expected from every NIX OS candid
 
 22.4.1 The public registry MUST identify the certified product, release, profile, tier, and status.
 
-22.4.2 The registry MUST link to the audit summary.
+22.4.2 The registry MUST link to the certification summary.
 
 22.4.3 The registry MUST identify exceptions and expiration dates.
 
@@ -1547,13 +1547,13 @@ The Common Base Profile defines the interfaces expected from every NIX OS candid
 
 ### 23.1 Permitted Claims
 
-23.1.1 A product that passes only a utility profile MAY claim “NIX Certified Utility” for the named release.
+23.1.1 A product that conforms only to a utility profile MAY claim “NIX Certified Utility” for the named release.
 
-23.1.2 A product that passes a library profile MAY claim “NIX Certified Library” for the named ABI and release.
+23.1.2 A product that conforms to a library profile MAY claim “NIX Certified Library” for the named ABI and release.
 
-23.1.3 A product that passes a kernel profile MAY claim “NIX Certified Kernel” for the named configuration and architecture.
+23.1.3 A product that conforms to a kernel profile MAY claim “NIX Certified Kernel” for the named configuration and architecture.
 
-23.1.4 A complete OS MAY claim “NIX Certified OS” only after passing the selected OS profile.
+23.1.4 A complete OS MAY claim “NIX Certified OS” only after conforming to the selected OS profile.
 
 23.1.5 Every claim MUST include the NIX Standard identifier and version.
 
@@ -1579,7 +1579,7 @@ The Common Base Profile defines the interfaces expected from every NIX OS candid
 
 23.2.5 The public summary MUST list material exceptions.
 
-23.2.6 The public summary MUST identify the audit date.
+23.2.6 The public summary MUST identify the certification date.
 
 23.2.7 The public summary MUST identify the release digest or immutable reference.
 
@@ -1609,7 +1609,7 @@ The Common Base Profile defines the interfaces expected from every NIX OS candid
 
 24.8 Minimalism MUST be evaluated against documented purpose, maintainability, security, and measured resource use; arbitrary byte ceilings MUST NOT substitute for engineering evidence.
 
-24.9 Zero telemetry is a NIX privacy policy choice and MUST be audited through multiple forms of evidence; binary symbol scans alone are insufficient.
+24.9 Zero telemetry is a NIX privacy policy choice and MUST be verified through multiple forms of evidence; binary symbol scans alone are insufficient.
 
 24.10 Open-source licensing MUST be evaluated by the exact licence terms and dependency obligations.
 
@@ -1713,13 +1713,13 @@ A.42 Confirm exceptions are listed.
 
 A.43 Confirm all exceptions have review dates.
 
-A.44 Confirm maintainers can respond to audit findings.
+A.44 Confirm maintainers can respond to certification findings.
 
 A.45 Confirm the release is ready for independent review.
 
 ---
 
-## APPENDIX B. AUDITOR'S EVIDENCE CHECKLIST
+## APPENDIX B. REVIEWER'S EVIDENCE CHECKLIST
 
 B.1 Record product name and release identifier.
 
@@ -1795,7 +1795,7 @@ B.36 Record severity and impact for each finding.
 
 B.37 Record the applicant's response.
 
-B.38 Record the auditor's disposition.
+B.38 Record the reviewer's disposition.
 
 B.39 Record the final outcome.
 
@@ -1895,7 +1895,7 @@ D.22 Build procedure MUST be stated.
 
 D.23 Test procedure MUST be stated.
 
-D.24 Audit evidence location MUST be stated.
+D.24 Certification evidence location MUST be stated.
 
 D.25 Known limitations MUST be stated.
 
@@ -1917,11 +1917,11 @@ E.4 **Platform scope.** A path, command, syscall, kernel parameter, service-mana
 
 E.5 **Exceptions.** Exceptions MUST be handled only through Section 22.3. A waiver MUST identify the exact clause, affected profile, release, risk, compensating control, approver, and review date.
 
-E.6 **Conflict resolution.** When two mandatory clauses appear inconsistent, the auditor MUST first apply the selected profile and the explicit scope of each clause. If the conflict remains, the auditor MUST record the issue as an ambiguity and MUST NOT fail the candidate on the basis of either conflicting interpretation until the Foundation publishes a clarification or revision.
+E.6 **Conflict resolution.** When two mandatory clauses appear inconsistent, the reviewer MUST first apply the selected profile and the explicit scope of each clause. If the conflict remains, the reviewer MUST record the issue as an ambiguity and MUST NOT fail the candidate on the basis of either conflicting interpretation until the Foundation publishes a clarification or revision.
 
 E.7 **Change impact.** Every revision MUST include a change log identifying modified normative clauses, affected profiles, compatibility impact, and any test vectors that changed.
 
-E.8 **Cross-reference audit.** Before publication, the Foundation MUST verify section references, defined terms, normative keywords, tables, profile applicability, and consistency between the standard and the `NIX Audit` implementation.
+E.8 **Cross-reference review.** Before publication, the Foundation MUST verify section references, defined terms, normative keywords, tables, profile applicability, and consistency between the standard and the certification verification procedures.
 
 E.9 **No silent override.** A later section does not automatically override an earlier section merely because it appears later. Overrides MUST explicitly identify the clause being modified and state the replacement rule.
 
